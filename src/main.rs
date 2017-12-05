@@ -95,6 +95,27 @@ impl ServoState {
 #[post("/")]
 fn toggle_servo_endpoint(servo: State<ServoState>) -> Json<ServoState> {
     let servo = servo.toggle(); // control the motor and toggle the state
+
+    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
+    pulse_pin.with_exported(|| {
+        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
+        sleep(Duration::from_millis(80)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
+        // loop for about a second
+        for _ in 0..200 {
+            pulse_pin.set_value(0).expect("Couldn't set pin to low");
+            sleep(Duration::from_millis(20)); // stay low for 20 ms
+            pulse_pin.set_value(1).expect("Couldn't set pin to high");
+            sleep(Duration::from_micros(2_000)); // go high for 1.5 ms
+        }
+
+        for _ in 0..50 {
+            pulse_pin.set_value(0).expect("Couldn't set pin to low");
+            sleep(Duration::from_millis(20)); // stay low for 20 ms
+            pulse_pin.set_value(1).expect("Couldn't set pin to high");
+            sleep(Duration::from_micros(1_000)); // go high for 1 ms
+        }
+    }).unwrap();
+
     Json(servo.clone())
 }
 
@@ -102,17 +123,7 @@ fn toggle_servo_endpoint(servo: State<ServoState>) -> Json<ServoState> {
 fn main() {
     let mut servo_position = ServoState::Locked;
 
-    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
-    pulse_pin.with_exported(|| {
-        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
-        sleep(Duration::from_millis(80)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
-        loop {
-            pulse_pin.set_value(0).expect("Couldn't set pin to low");
-            sleep(Duration::from_millis(20)); // stay low for 20 ms
-            pulse_pin.set_value(1).expect("Couldn't set pin to high");
-            sleep(Duration::from_micros(1_500)); // go high for 1.5 ms
-        }
-    }).unwrap();
+
 
     rocket::ignite()
         .manage(pulse_pin)
