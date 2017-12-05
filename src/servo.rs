@@ -61,13 +61,17 @@ impl Servo {
 
     /// The Servo expects a signal every 20 ms.
     /// The signal shall go high for the duration of pulse_width parameter.
-    /// Depending on how long the width is (usually between 1-2 ms), the servo will rotate to a given angle.
+    /// Depending on how long the pulse width is (usually between 1-2 ms),
+    /// the servo will rotate to a given angle.
     ///
     /// Once signals stop, the servo will remain in its last position.
     fn send_pulses(&self, pulse_width: Duration) {
         let pulse_pin = self.signal_pin.clone();
         pulse_pin.with_exported(|| {
-            sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
+            // udev is apparently awful, and takes a while to set the permissions of the pin.
+            // If this delay isn't present, there is the possibility that the pulse pin will fail to
+            // be enabled, and will crash the thread responsible for sending the signals.
+            sleep(Duration::from_millis(100));
             pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
             // loop for about a tenth of a second
             for _ in 0..50 {
