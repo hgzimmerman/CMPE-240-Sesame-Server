@@ -114,6 +114,7 @@ fn toggle_servo_endpoint(servo: State<ServoState>) -> Json<ServoState> {
             pulse_pin.set_value(1).expect("Couldn't set pin to high");
             sleep(Duration::from_micros(1_000)); // go high for 1 ms
         }
+        Ok(())
     }).unwrap();
 
     Json(servo.clone())
@@ -123,10 +124,7 @@ fn toggle_servo_endpoint(servo: State<ServoState>) -> Json<ServoState> {
 fn main() {
     let mut servo_position = ServoState::Locked;
 
-
-
     rocket::ignite()
-        .manage(pulse_pin)
         .manage(servo_position)
         .mount("/", routes![toggle_servo_endpoint])
         .launch();   
