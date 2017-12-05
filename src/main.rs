@@ -68,45 +68,19 @@ impl Servo {
 
 fn unlock(pulse_pin: Pin) {
     send_pulse(pulse_pin, Duration::from_micros(2_000));
-//    pulse_pin.with_exported(|| {
-//        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
-//        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
-//        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
-//        for _ in 0..100 {
-//            pulse_pin.set_value(0).expect("Couldn't set pin to low");
-//            sleep(Duration::from_millis(20)); // stay low for 20 ms
-//            pulse_pin.set_value(1).expect("Couldn't set pin to high");
-//            sleep(Duration::from_micros(2_000)); // go high for 2 ms
-//        }
-//        Ok(())
-//    }).unwrap();
 }
 
 fn lock(pulse_pin: Pin) {
     send_pulse(pulse_pin, Duration::from_micros(1_000)); // send a pulse for 2 ms
-//    pulse_pin.with_exported(|| {
-//        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
-//        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
-//        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
-//        // loop for about a second
-//        for _ in 0..100 {
-//            pulse_pin.set_value(0).expect("Couldn't set pin to low");
-//            sleep(Duration::from_millis(20)); // stay low for 20 ms
-//            pulse_pin.set_value(1).expect("Couldn't set pin to high");
-//            sleep(Duration::from_micros(1_000)); // go high for 1 ms
-//        }
-//
-//        Ok(())
-//    }).unwrap();
+
 }
 
 fn send_pulse(pulse_pin: Pin, pulse_width: Duration) {
     pulse_pin.with_exported(|| {
         sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
         pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
-        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
-        // loop for about a second
-        for _ in 0..100 {
+        // loop for about a tenth of a second
+        for _ in 0..50 {
             pulse_pin.set_value(0).expect("Couldn't set pin to low");
             sleep(Duration::from_millis(20)); // stay low for 20 ms - the width
             pulse_pin.set_value(1).expect("Couldn't set pin to high");
