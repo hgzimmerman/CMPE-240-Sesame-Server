@@ -132,7 +132,7 @@ fn toggle_servo_endpoint(servo: State<ServoState>) {
 
 
 fn main() {
-    let mut servo_position = ServoState::Locked(Pin::new(16));
+    let mut servo_position = ServoState::Unlocked(Pin::new(16));
 
     rocket::ignite()
         .manage(servo_position)
