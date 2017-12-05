@@ -28,7 +28,15 @@ use servo::Servo;
 
 
 #[post("/")]
-fn toggle_servo_endpoint(servo: State<Mutex<Servo>>) {
+fn POST_toggle_servo_endpoint(servo: State<Mutex<Servo>>) {
+    info!("Got message");
+    // Lock the mutex and toggle the servo's state
+    servo.lock().unwrap().toggle();
+    // The lock will be dropped at the end of this function by a RAII destructor.
+}
+
+#[get("/")]
+fn GET_toggle_servo_endpoint(servo: State<Mutex<Servo>>) {
     info!("Got message");
     // Lock the mutex and toggle the servo's state
     servo.lock().unwrap().toggle();
@@ -53,6 +61,6 @@ fn main() {
 
     rocket::ignite()
         .manage(servo_position)
-        .mount("/", routes![toggle_servo_endpoint])
+        .mount("/", routes![POST_toggle_servo_endpoint, GET_toggle_servo_endpoint])
         .launch();   
 }
