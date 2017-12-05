@@ -1,0 +1,15 @@
+[package]
+name = "cmpe240"
+version = "0.1.0"
+authors = ["Henry Zimmerman <zimhen7@gmail.com>"]
+
+[dependencies]
+rocket = "0.3.3"
+rocket_codegen = "0.3.3"
+rocket_contrib = "0.3.3"
+
+serde = "1.0.14"
+serde_json = "1.0.3"
+serde_derive = "1.0.14"
+
+#cupi = "0.1.0"
