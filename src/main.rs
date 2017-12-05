@@ -2,7 +2,6 @@
 #![plugin(rocket_codegen)]
 //#![feature(drop_types_in_const)]
 #![feature(const_fn)]
-#![feature(drop_types_in_const)]
 //#![feature(const_fn)]
 #![feature(duration_from_micros)]
 
@@ -12,30 +11,17 @@ extern crate sysfs_gpio;
 
 
 extern crate rocket;
-extern crate rocket_codegen;
-#[macro_use]
 extern crate rocket_contrib;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
 
 use sysfs_gpio::{Direction, Pin};
 use std::thread::sleep;
 use std::time::Duration;
 use std::sync::Mutex;
 
-
-use rocket_contrib::{Json, Value};
+//use rocket_contrib::{Json, Value};
 use rocket::State;
 
 
-
-const SERVO_GPIO_PIN: u32 = 18;
-
-const ROTATE_CLOCKWISE_DELAY:u32 = 1;
-const ROTATE_COUNTERCLOCKWISE_DELAY: u32 = 2;
-const STANDARD_DELAY: u32 = 1;
-const DISTANCE_ITERATION: u32 = 20;
 
 #[derive(Clone)]
 pub enum ServoState {
@@ -66,12 +52,15 @@ impl Servo {
     }
 }
 
+const UNLOCK_PULSE_WIDTH_MICROS: u64 = 2000; // Stay high for 2 ms
+const LOCK_PULSE_WIDTH_MICROS: u64 = 1000; // Stay high for 1 ms
+
 fn unlock(pulse_pin: Pin) {
-    send_pulse(pulse_pin, Duration::from_micros(2_000));
+    send_pulse(pulse_pin, Duration::from_micros(UNLOCK_PULSE_WIDTH_MICROS));
 }
 
 fn lock(pulse_pin: Pin) {
-    send_pulse(pulse_pin, Duration::from_micros(1_000)); // send a pulse for 2 ms
+    send_pulse(pulse_pin, Duration::from_micros(LOCK_PULSE_WIDTH_MICROS));
 
 }
 
@@ -100,7 +89,7 @@ fn toggle_servo_endpoint(servo: State<Mutex<Servo>>) {
 
 
 fn main() {
-    let mut servo_position = Mutex::new(Servo(ServoState::Locked(Pin::new(16)) ));
+    let servo_position = Mutex::new(Servo(ServoState::Locked(Pin::new(16)) ));
 
     rocket::ignite()
         .manage(servo_position)
