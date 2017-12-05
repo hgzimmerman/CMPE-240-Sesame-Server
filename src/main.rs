@@ -67,7 +67,7 @@ fn unlock(pulse_pin: Pin) {
 //    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
     pulse_pin.with_exported(|| {
         pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
-        sleep(Duration::from_millis(80)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
+        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
         for _ in 0..50 {
             pulse_pin.set_value(0).expect("Couldn't set pin to low");
             sleep(Duration::from_millis(20)); // stay low for 20 ms
@@ -83,7 +83,7 @@ fn unlock(pulse_pin: Pin) {
 fn lock(pulse_pin: Pin) {
     pulse_pin.with_exported(|| {
         pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
-        sleep(Duration::from_millis(80)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
+        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
         // loop for about a second
         for _ in 0..50 {
             pulse_pin.set_value(0).expect("Couldn't set pin to low");
