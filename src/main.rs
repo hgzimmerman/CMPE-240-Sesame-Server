@@ -52,12 +52,10 @@ impl Servo {
         // Set the state to the new servo state.
         self.state = match self.state {
             ServoState::Locked => {
-                info!("Unlocking");
                 self.unlock();
                 ServoState::Unlocked
             },
             ServoState::Unlocked => {
-
                 self.lock();
                 ServoState::Locked
             }
