@@ -4,6 +4,10 @@
 #![feature(const_fn)]
 #![feature(drop_types_in_const)]
 //#![feature(const_fn)]
+#![feature(duration_from_micros)]
+
+
+extern crate sysfs_gpio;
 
 
 
@@ -15,14 +19,14 @@ extern crate rocket_contrib;
 extern crate serde_derive;
 extern crate serde_json;
 
-//extern crate cupi;
+use sysfs_gpio::{Direction, Pin};
+use std::thread::sleep;
+use std::time::Duration;
 
 
 
 use rocket_contrib::{Json, Value};
 use rocket::State;
-//use cupi::{CuPi, delay_ms, DigitalWrite};
-
 
 
 
@@ -74,6 +78,8 @@ pub enum ServoState {
 //    }
 //}
 
+
+
 impl ServoState {
     fn toggle(&self) -> ServoState {
         println!("Received a message.");
@@ -96,7 +102,18 @@ fn toggle_servo_endpoint(servo: State<ServoState>) -> Json<ServoState> {
 fn main() {
     let mut servo_position = ServoState::Locked;
 
+    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
+    pulse_pin.with_exported(|| {
+        loop {
+            pulse_pin.set_value(0).unwrap();
+            sleep(Duration::from_millis(20)); // stay low for 20 ms
+            pulse_pin.set_value(1).unwrap();
+            sleep(Duration::from_micros(1_500)); // go high for 1.5 ms
+        }
+    }).unwrap();
+
     rocket::ignite()
+        .manage(pulse_pin)
         .manage(servo_position)
         .mount("/", routes![toggle_servo_endpoint])
         .launch();   
