@@ -23,13 +23,18 @@ use rocket::State;
 
 
 
+/// Holds information on the current state of the servo.
 #[derive(Clone)]
 pub enum ServoState {
-    Locked(Pin),
-    Unlocked(Pin)
+    Locked,
+    Unlocked
 }
 
-pub struct Servo(ServoState);
+/// Wrapper around the Servo's state and the pin used to send the signal to the servo.
+pub struct Servo{
+    state: ServoState,
+    signal_pin: Pin
+}
 
 
 
@@ -37,34 +42,43 @@ impl Servo {
     fn toggle(&mut self) {
         println!("Toggling servo state:");
         // Set the state to the new servo state.
-        self.0 = match self.0 {
-            ServoState::Locked(pin) => {
+        self.state = match self.state {
+            ServoState::Locked => {
                 println!("Unlocking");
-                unlock(pin.clone());
-                ServoState::Unlocked(pin)
+                self.unlock();
+                ServoState::Unlocked
             },
-            ServoState::Unlocked(pin) => {
+            ServoState::Unlocked => {
                 println!("Locking");
-                lock(pin.clone());
-                ServoState::Locked(pin)
+                self.lock();
+                ServoState::Locked
             }
         }
+    }
+
+    /// Move the servo into the "lock" position.
+    fn lock(&self) {
+        send_pulses(self.signal_pin.clone(), Duration::from_micros(LOCK_PULSE_WIDTH_MICROS));
+    }
+    /// Move the servo into the "unlock" position.
+    fn unlock(&self) {
+        send_pulses(self.signal_pin.clone(), Duration::from_micros(UNLOCK_PULSE_WIDTH_MICROS));
     }
 }
 
 const UNLOCK_PULSE_WIDTH_MICROS: u64 = 2000; // Stay high for 2 ms
 const LOCK_PULSE_WIDTH_MICROS: u64 = 1000; // Stay high for 1 ms
 
-fn unlock(pulse_pin: Pin) {
-    send_pulse(pulse_pin, Duration::from_micros(UNLOCK_PULSE_WIDTH_MICROS));
-}
 
-fn lock(pulse_pin: Pin) {
-    send_pulse(pulse_pin, Duration::from_micros(LOCK_PULSE_WIDTH_MICROS));
 
-}
 
-fn send_pulse(pulse_pin: Pin, pulse_width: Duration) {
+
+/// The Servo expects a signal every 20 ms.
+/// The signal shall go high for the pulse_width parameter.
+/// Depending on how long the width is (usually between 1-2 ms), the servo will rotate to a given angle.
+///
+/// Once signals stop, the servo will remain in its last position.
+fn send_pulses(pulse_pin: Pin, pulse_width: Duration) {
     pulse_pin.with_exported(|| {
         sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
         pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
@@ -73,9 +87,8 @@ fn send_pulse(pulse_pin: Pin, pulse_width: Duration) {
             pulse_pin.set_value(0).expect("Couldn't set pin to low");
             sleep(Duration::from_millis(20) - pulse_width); // stay low for 20 ms - the width of the pulse
             pulse_pin.set_value(1).expect("Couldn't set pin to high");
-            sleep(pulse_width); // stay high for the given time
+            sleep(pulse_width); // stay high for the provided pulse width
         }
-
         Ok(())
     }).unwrap();
 }
@@ -89,7 +102,12 @@ fn toggle_servo_endpoint(servo: State<Mutex<Servo>>) {
 
 
 fn main() {
-    let servo_position = Mutex::new(Servo(ServoState::Locked(Pin::new(16)) ));
+    let servo_position = Mutex::new(
+        Servo {
+            state: ServoState::Locked,
+            signal_pin: Pin::new(16)
+        }
+    );
 
     rocket::ignite()
         .manage(servo_position)
