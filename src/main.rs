@@ -105,9 +105,9 @@ fn main() {
     let pulse_pin = Pin::new(16); // Targeting pin 16 for now
     pulse_pin.with_exported(|| {
         loop {
-            pulse_pin.set_value(0).unwrap();
+            pulse_pin.set_value(0).expect("Couldn't set pin to low");
             sleep(Duration::from_millis(20)); // stay low for 20 ms
-            pulse_pin.set_value(1).unwrap();
+            pulse_pin.set_value(1).expect("Couldn't set pin to high");
             sleep(Duration::from_micros(1_500)); // go high for 1.5 ms
         }
     }).unwrap();
