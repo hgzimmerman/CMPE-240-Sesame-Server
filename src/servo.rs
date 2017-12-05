@@ -74,7 +74,7 @@ impl Servo {
             sleep(Duration::from_millis(100));
             pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
             // loop for about a tenth of a second
-            for _ in 0..50 {
+            for _ in 0..40 {
                 pulse_pin.set_value(0).expect("Couldn't set pin to low");
                 sleep(Duration::from_millis(20) - pulse_width); // stay low for 20 ms - the width of the pulse
                 pulse_pin.set_value(1).expect("Couldn't set pin to high");
