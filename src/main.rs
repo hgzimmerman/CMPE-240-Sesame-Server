@@ -104,6 +104,7 @@ fn main() {
 
     let pulse_pin = Pin::new(16); // Targeting pin 16 for now
     pulse_pin.with_exported(|| {
+        sleep(Duration::from_milis(80)); // udev is apparently aweful
         loop {
             pulse_pin.set_value(0).expect("Couldn't set pin to low");
             sleep(Duration::from_millis(20)); // stay low for 20 ms
