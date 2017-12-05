@@ -22,7 +22,7 @@ extern crate serde_json;
 use sysfs_gpio::{Direction, Pin};
 use std::thread::sleep;
 use std::time::Duration;
-
+use std::sync::Mutex;
 
 
 use rocket_contrib::{Json, Value};
@@ -43,12 +43,15 @@ pub enum ServoState {
     Unlocked(Pin)
 }
 
+pub struct Servo(ServoState);
 
 
-impl ServoState {
-    fn toggle(&self) -> ServoState {
+
+impl Servo {
+    fn toggle(&mut self) {
         println!("Toggling servo state:");
-        match *self {
+        // Set the state to the new servo state.
+        self.0 = match self.0 {
             ServoState::Locked(pin) => {
                 println!("Unlocking");
                 unlock(pin.clone());
@@ -99,11 +102,11 @@ fn lock(pulse_pin: Pin) {
 
 
 #[post("/")]
-fn toggle_servo_endpoint(servo: State<ServoState>) {
+fn toggle_servo_endpoint(servo: State<Mutex<Servo>>) {
 //    let servo = servo.toggle(); // control the motor and toggle the state
 
     println!("Got message");
-    servo.toggle();
+    servo.inner().lock().unwrap().toggle();
 //    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
 //    pulse_pin.with_exported(|| {
 //        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
@@ -132,7 +135,7 @@ fn toggle_servo_endpoint(servo: State<ServoState>) {
 
 
 fn main() {
-    let mut servo_position = ServoState::Unlocked(Pin::new(16));
+    let mut servo_position = Mutex::new(Servo(ServoState::Locked(Pin::new(16)) ));
 
     rocket::ignite()
         .manage(servo_position)
