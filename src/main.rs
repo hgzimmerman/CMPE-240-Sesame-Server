@@ -37,59 +37,63 @@ const ROTATE_COUNTERCLOCKWISE_DELAY: u32 = 2;
 const STANDARD_DELAY: u32 = 1;
 const DISTANCE_ITERATION: u32 = 20;
 
-#[derive(Serialize, Clone)]
+#[derive(Clone)]
 pub enum ServoState {
-    Locked,
-    Unlocked
+    Locked(Pin),
+    Unlocked(Pin)
 }
-//
-//impl ServoState {
-//
-//    fn toggle(&self) -> ServoState {
-//        let cupi = CuPi::new().unwrap();
-//        let mut pinout = cupi.pin(SERVO_GPIO_PIN)
-//            .unwrap()
-//            .high()
-//            .output();
-//
-//        match *self {
-//            ServoState::Locked => {
-//
-//                for _ in 0..DISTANCE_ITERATION {
-//                    pinout.high().unwrap();
-//                    delay_ms(ROTATE_CLOCKWISE_DELAY);
-//                    pinout.low().unwrap();
-//                    delay_ms(STANDARD_DELAY);
-//                }
-//
-//                ServoState::Unlocked
-//            }
-//
-//            ServoState::Unlocked => {
-//                for _ in 0..DISTANCE_ITERATION {
-//                    pinout.high().unwrap();
-//                    delay_ms(ROTATE_COUNTERCLOCKWISE_DELAY);
-//                    pinout.low().unwrap();
-//                    delay_ms(STANDARD_DELAY);
-//                }
-//                ServoState::Locked
-//            }
-//        }
-//    }
-//}
 
 
 
 impl ServoState {
     fn toggle(&self) -> ServoState {
-        println!("Received a message.");
+        println!("Toggling servo state:");
         match *self {
-            ServoState::Locked => ServoState::Unlocked,
-            ServoState::Unlocked => ServoState::Locked
+            ServoState::Locked(pin) => {
+                println!("Unlocking");
+                unlock(pin.clone());
+                ServoState::Unlocked(pin)
+            },
+            ServoState::Unlocked(pin) => {
+                println!("Locking");
+                lock(pin.clone());
+                ServoState::Locked(pin)
+            }
+        }
+    }
+}
+
+fn unlock(pulse_pin: Pin) {
+//    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
+    pulse_pin.with_exported(|| {
+        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
+        sleep(Duration::from_millis(80)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
+        for _ in 0..50 {
+            pulse_pin.set_value(0).expect("Couldn't set pin to low");
+            sleep(Duration::from_millis(20)); // stay low for 20 ms
+            pulse_pin.set_value(1).expect("Couldn't set pin to high");
+            sleep(Duration::from_micros(2_000)); // go high for 2 ms
         }
 
 
-    }
+        Ok(())
+    }).unwrap();
+}
+
+fn lock(pulse_pin: Pin) {
+    pulse_pin.with_exported(|| {
+        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
+        sleep(Duration::from_millis(80)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
+        // loop for about a second
+        for _ in 0..50 {
+            pulse_pin.set_value(0).expect("Couldn't set pin to low");
+            sleep(Duration::from_millis(20)); // stay low for 20 ms
+            pulse_pin.set_value(1).expect("Couldn't set pin to high");
+            sleep(Duration::from_micros(1_000)); // go high for 1 ms
+        }
+
+        Ok(())
+    }).unwrap();
 }
 
 
@@ -99,26 +103,27 @@ fn toggle_servo_endpoint(servo: State<ServoState>) {
 //    let servo = servo.toggle(); // control the motor and toggle the state
 
     println!("Got message");
-    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
-    pulse_pin.with_exported(|| {
-        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
-        sleep(Duration::from_millis(80)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
-        // loop for about a second
-        for _ in 0..200 {
-            pulse_pin.set_value(0).expect("Couldn't set pin to low");
-            sleep(Duration::from_millis(20)); // stay low for 20 ms
-            pulse_pin.set_value(1).expect("Couldn't set pin to high");
-            sleep(Duration::from_micros(2_000)); // go high for 1.5 ms
-        }
-
-        for _ in 0..50 {
-            pulse_pin.set_value(0).expect("Couldn't set pin to low");
-            sleep(Duration::from_millis(20)); // stay low for 20 ms
-            pulse_pin.set_value(1).expect("Couldn't set pin to high");
-            sleep(Duration::from_micros(1_000)); // go high for 1 ms
-        }
-        Ok(())
-    }).unwrap();
+    servo.toggle();
+//    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
+//    pulse_pin.with_exported(|| {
+//        pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
+//        sleep(Duration::from_millis(80)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
+//        // loop for about a second
+//        for _ in 0..200 {
+//            pulse_pin.set_value(0).expect("Couldn't set pin to low");
+//            sleep(Duration::from_millis(20)); // stay low for 20 ms
+//            pulse_pin.set_value(1).expect("Couldn't set pin to high");
+//            sleep(Duration::from_micros(2_000)); // go high for 1.5 ms
+//        }
+//
+//        for _ in 0..50 {
+//            pulse_pin.set_value(0).expect("Couldn't set pin to low");
+//            sleep(Duration::from_millis(20)); // stay low for 20 ms
+//            pulse_pin.set_value(1).expect("Couldn't set pin to high");
+//            sleep(Duration::from_micros(1_000)); // go high for 1 ms
+//        }
+//        Ok(())
+//    }).unwrap();
 
     println!("done doing servo stuff")
 
@@ -127,7 +132,7 @@ fn toggle_servo_endpoint(servo: State<ServoState>) {
 
 
 fn main() {
-    let mut servo_position = ServoState::Locked;
+    let mut servo_position = ServoState::Locked(Pin::new(16));
 
     rocket::ignite()
         .manage(servo_position)
