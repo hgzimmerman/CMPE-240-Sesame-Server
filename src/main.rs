@@ -82,7 +82,7 @@ fn send_pulse(pulse_pin: Pin, pulse_width: Duration) {
         // loop for about a tenth of a second
         for _ in 0..50 {
             pulse_pin.set_value(0).expect("Couldn't set pin to low");
-            sleep(Duration::from_millis(20)); // stay low for 20 ms - the width
+            sleep(Duration::from_millis(20) - pulse_width); // stay low for 20 ms - the width of the pulse
             pulse_pin.set_value(1).expect("Couldn't set pin to high");
             sleep(pulse_width); // stay high for the given time
         }
@@ -95,7 +95,7 @@ fn send_pulse(pulse_pin: Pin, pulse_width: Duration) {
 #[post("/")]
 fn toggle_servo_endpoint(servo: State<Mutex<Servo>>) {
     println!("Got message");
-    servo.inner().lock().unwrap().toggle();
+    servo.lock().unwrap().toggle();
 }
 
 
