@@ -66,6 +66,7 @@ impl ServoState {
 fn unlock(pulse_pin: Pin) {
 //    let pulse_pin = Pin::new(16); // Targeting pin 16 for now
     pulse_pin.with_exported(|| {
+        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
         pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
         sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
         for _ in 0..50 {
@@ -82,6 +83,7 @@ fn unlock(pulse_pin: Pin) {
 
 fn lock(pulse_pin: Pin) {
     pulse_pin.with_exported(|| {
+        sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
         pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
         sleep(Duration::from_millis(180)); // udev is apparently aweful, and takes a while to set the permissions of the pin.
         // loop for about a second
