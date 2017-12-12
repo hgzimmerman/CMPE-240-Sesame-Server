@@ -2,7 +2,10 @@ use sysfs_gpio::{Direction, Pin};
 use std::time::Duration;
 use std::thread::sleep;
 
-/// Holds information on the current state of the servo.
+const UNLOCK_PULSE_WIDTH_MICROS: u64 = 2000; // keep pin high for 2 ms
+const LOCK_PULSE_WIDTH_MICROS: u64 = 1000; // keep pin high for 1 ms
+
+/// Holds information on the current rotational state of the servo.
 #[derive(Clone, Debug)]
 enum ServoState {
     Locked,
@@ -12,15 +15,18 @@ enum ServoState {
 /// Wrapper around the Servo's state and the pin used to send the signal to the servo.
 #[derive(Clone, Debug)]
 pub struct Servo {
-    state: ServoState,
-    signal_pin: Pin
+    state: ServoState, // The current rotational state of the servo
+    signal_pin: Pin // Pin controlling GPIO for servo
 }
-
 
 impl Servo {
 
     /// Constructs a new Servo instance with a given pin number used to drive the
     /// signal to the physical servo.
+    ///
+    /// Assume that the servo starts in a locked position.
+    /// If it isn't, the first action to toggle the servo will have no effect,
+    /// but after that, the servo state will reflect the state of the real servo.
     pub fn new(pin_number: u64) -> Servo {
         Servo {
             state: ServoState::Locked,
@@ -28,7 +34,7 @@ impl Servo {
         }
     }
 
-    /// Depending on the current rotational state of the servo, move the servo into the other state
+    /// Depending on the current rotational state of the servo, move the servo into the other state.
     pub fn toggle(&mut self) {
         info!("Toggling servo state:");
         // Set the state to the new servo state.
@@ -73,10 +79,12 @@ impl Servo {
             // be enabled, and will crash the thread responsible for sending the signals.
             sleep(Duration::from_millis(100));
             pulse_pin.set_direction(Direction::Low).expect("Couldn't set the direction of the pin");
-            // loop for about a tenth of a second
+
+            // loop until the servo has had a chance to get into position
             for _ in 0..40 {
                 pulse_pin.set_value(0).expect("Couldn't set pin to low");
-                sleep(Duration::from_millis(20) - pulse_width); // stay low for 20 ms - the width of the pulse
+                // stay low for 20 ms - the width of the pulse
+                sleep(Duration::from_millis(20) - pulse_width);
                 pulse_pin.set_value(1).expect("Couldn't set pin to high");
                 sleep(pulse_width); // stay high for the provided pulse width
             }
@@ -86,5 +94,3 @@ impl Servo {
 
 }
 
-const UNLOCK_PULSE_WIDTH_MICROS: u64 = 2000; // Stay high for 2 ms
-const LOCK_PULSE_WIDTH_MICROS: u64 = 1000; // Stay high for 1 ms
