@@ -42,8 +42,7 @@ This should take 5 to 10 minutes.
 * The servo's signal cable should be connected to pin 16 of the breaker cable.
 * The servo's ground should connect to the ground of the breaker cable.
 * The external battery should connect to the power and ground of the servo.
-
-
+![breadboard](https://raw.githubusercontent.com/hgzimmerman/CMPE-240-Sesame-Server/master/latex/breadboard.jpg)
 ## Execution Instructions
 The execution instructions were covered in the compilation instructions section.
 
