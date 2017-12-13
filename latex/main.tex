@@ -105,9 +105,9 @@ The cables from the external batteries that provide the 5v can be found at the b
 
 \begin{figure}[H]
     \center
-    \label{fig:breadboard}
     \caption{Breadboard}
     \includegraphics[width=10cm]{breadboard.jpg}
+    \label{fig:breadboard}
 \end{figure}
 
 
@@ -131,7 +131,7 @@ This problem was resolved by adding a 100 ms delay before the pin was configured
 
 
 Once accessing GPIO pins ceased causing the servo thread to crash, determining if controlling the servo was possible was the next task.
-Based on Figure ~\ref{fig:servo}, it was apparent that the servo would expect a signal pulse every 20 ms, and the servo would rotate to an angle that corresponds to the pulse width.
+Based on Figure \ref{fig:servo}, it was apparent that the servo would expect a signal pulse every 20 ms, and the servo would rotate to an angle that corresponds to the pulse width.
 
 
 
@@ -167,13 +167,13 @@ The name of the app used for lookup via Google's STT system was changed to ``Loc
 \section{Results and Analysis}\label{sec:resultsAndAnalysis}
 With the required components completed: the server, servo wiring, servo controller logic, and Android Wear app, it was now possible to rotate a servo by remotely speaking a voice command.
 The server would toggle the servo, and log this information.
-A sample server log of Rocket starting and handling requests for toggling the servo is provided in Figure ~\ref{fig:logs}.
+A sample server log of Rocket starting and handling requests for toggling the servo is provided in Figure \ref{fig:logs}.
 This demonstrates that the server is capable of handling requests and altering its representation of the servo across multiple requests.
 
 \begin{figure}[H]
     \center
-    \label{fig:logs}
     \caption{Server Logs}
+    \label{fig:logs}
     \includegraphics[width=10cm]{sesameServerOutput.png}
 \end{figure}
 
@@ -186,12 +186,12 @@ The release build for Rust is typically much faster than the unoptimized build, 
 This might have been a problem in other languages with more variable runtime performance, but the lack of garbage collection means that Rust typically has consistent performance
 Ultimately, it was found that the delay used to keep the pin low was leading to the full period of the pulse being too long (20 ms + pulse width), causing the servo receive a signal it couldn't adequately translate to a rotation angle.
 
-Figure ~\ref{fig:servo} demonstrates how the servo is controlled.
+Figure \ref{fig:servo} demonstrates how the servo is controlled.
 By changing how long the pulse is, in the case of this project, between 1 ms to 2 ms, the Raspberry Pi was able to instruct the servo to change its rotation.
 \begin{figure}[H]
     \center
-    \label{fig:servo}
     \caption{Servo Operation}
+    \label{fig:servo}
     \includegraphics[width=12cm]{servoOperation.png}
 \end{figure}
 
@@ -207,10 +207,13 @@ A sequence diagram was constructed to demonstrate how the components talked to e
 Google's speech-to-text engine would listen for ``Open Lock'', causing the app to open, sending a request to the Rocket server running on the Pi which would then toggle the servo, causing an HTTP 200 response to be sent back to the app.
 \begin{figure}[H]
     \center
-    \label{fig:sequence}
     \caption{Sequence Diagram}
+    \label{fig:sequence}
     \includegraphics[width=14cm]{SesameSequenceDiagram.png}
 \end{figure}
+
+
+
 \section{Conclusion}\label{sec:conclusion}
 
 Some opportunities that would have expanded the scope of the project were missed.
@@ -220,7 +223,7 @@ A subroutine could be set up to periodically make sure that the servo is in the 
 This would allow end users to unlock it manually with a key, and know that it will lock again soon after.
 
 
-While the primary goal of speaking a command to a watch would cause a servo to rotate in a manner that could unlock a door was met, a number of optional details laid out in the proposal were not met.
+While the primary goal of speaking a command to a watch to cause a servo to rotate in a manner that could unlock a door was met, a number of optional details laid out in the proposal were not met.
 
 Due to time and material constraints, as well as a desire to get my security deposit back, it was decided that the servo would not be mounted to a door.
 This would likely have required some glue to attach the servo's head to the lock, something to affix the servo's body statically to the door, as well as something to hold the Raspberry Pi and the other related circuitry.
@@ -239,11 +242,9 @@ it was found that implementing a voice controlled door lock is possible using th
 
 \section{Source}\label{sec:source}
 The relevant parts of source are made available here.
-On top of that, Rust has a wonderful documentation tool that generates a static website from provided source code.
-A zipped archive of the generated documentation is included in the submission.
 Additionally, the project itself will be hosted on Github \href{https://github.com/hgzimmerman/CMPE-240-Sesame-Server}{here} for at least the duration of the grading period and will not be modified after the due date.
 
-\subsection{Server}\label{subsec:server}
+\subsection{Rocket Server and Servo Control}\label{subsec:server}
 
 \lstinputlisting[
     frame=single,

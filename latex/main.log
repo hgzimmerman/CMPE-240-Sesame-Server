@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/NixOS.org) (preloaded format=pdflatex 2017.12.8)  13 DEC 2017 11:45
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/NixOS.org) (preloaded format=pdflatex 2017.12.8)  13 DEC 2017 12:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1102,7 +1102,7 @@ fonts/map/pdftex/updmap/pdftex.map}]
 <breadboard.jpg, id=54, 722.7pt x 963.6pt>
 File: breadboard.jpg Graphic file (type jpg)
  <use breadboard.jpg>
-Package pdftex.def Info: breadboard.jpg used on input line 110.
+Package pdftex.def Info: breadboard.jpg used on input line 109.
 (pdftex.def)             Requested size: 284.52756pt x 379.3754pt.
  [2] [3 <./breadboard.jpg>] <sesameServerOutput.png, id=67, 880.28876pt x 779.9
 1376pt>
@@ -1112,14 +1112,14 @@ File: sesameServerOutput.png Graphic file (type png)
 Package pdftex.def Info: sesameServerOutput.png used on input line 177.
 (pdftex.def)             Requested size: 284.52756pt x 252.07661pt.
  [4]
-<servoOperation.png, id=76, 577.07594pt x 347.25735pt>
+<servoOperation.png, id=77, 577.07594pt x 347.25735pt>
 File: servoOperation.png Graphic file (type png)
 
 <use servoOperation.png>
 Package pdftex.def Info: servoOperation.png used on input line 195.
 (pdftex.def)             Requested size: 341.43306pt x 205.45761pt.
  [5 <./sesameServerOutput.png>]
-<SesameSequenceDiagram.png, id=83, 583.17876pt x 302.12875pt>
+<SesameSequenceDiagram.png, id=84, 583.17876pt x 302.12875pt>
 File: SesameSequenceDiagram.png Graphic file (type png)
 
 <use SesameSequenceDiagram.png>
@@ -1145,7 +1145,7 @@ LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <9> not available
 (Font)              Font shape `OML/cmm/m/it' tried instead on input line 28.
 ) (../src/servo.rs [8] [9]) (../Cargo.toml)
 (../Rocket.toml [10])
-Overfull \hbox (55.63524pt too wide) in paragraph at lines 293--293
+Overfull \hbox (55.63524pt too wide) in paragraph at lines 294--294
 []\OT1/cmr/m/n/10 Listing 5: an-droid/S-esame2/app/src/main/java/com/example/hz
 immerman/sesame/ToggleServoActivity.java 
  []
@@ -1154,19 +1154,29 @@ immerman/sesame/ToggleServoActivity.java
 (../android/Sesame2/app/src/main/java/com/example/hzimmerman/sesame/ToggleServo
 Activity.java [11]) (../android/Sesame2/app/src/main/AndroidManifest.xml
 [12]) [13]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 347.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 347.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 306.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 306.
  (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 347.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 347.
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: CCC0DAEE4F6DDBBF771D3A11185D74CE;353.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 347.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 306.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 306.
+
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: CCC0DAEE4F6DDBBF771D3A11185D74CE;353
+(rerunfilecheck)             After:  873F2038CECA4390625AE74B05A47ADE;378.
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 306.
  ) 
 Here is how much of TeX's memory you used:
  34283 strings out of 494386
  800939 string characters out of 6165510
- 1077039 words of memory out of 5000000
+ 1094014 words of memory out of 5000000
  36778 multiletter control sequences out of 15000+600000
  12200 words of font info for 47 fonts, out of 8000000 for 9000
  452 hyphenation exceptions out of 8191
@@ -1185,7 +1195,7 @@ hare/texmf/fonts/type1/public/amsfonts/cm/cmsy9.pfb></nix/store/6l4fkgz56ng27i7
 4c2lbg07fs4c6qrgx-texlive-combined-2016/share/texmf/fonts/type1/public/amsfonts
 /cm/cmti10.pfb></nix/store/6l4fkgz56ng27i74c2lbg07fs4c6qrgx-texlive-combined-20
 16/share/texmf/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on main.pdf (13 pages, 830327 bytes).
+Output written on main.pdf (13 pages, 830465 bytes).
 PDF statistics:
  526 PDF objects out of 1000 (max. 8388607)
  490 compressed objects within 5 object streams
