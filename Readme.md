@@ -1,9 +1,9 @@
 # Sesame
 
-### Group Members
+## Group Members
 Henry Zimmerman
 
-### Compilation Instructions
+## Compilation Instructions
 
 #### Server and Servo Control
 The nightly version of Rust is required to compile the Sesame Server.
@@ -30,7 +30,7 @@ If these preconditions are met, the "run" window (shift + f10) of Android Studio
 Select the watch and the Gradle build tool should compile the app, and load it onto the watch via the computer's connection to the phone.
 The application should launch once it has been loaded onto the watch.
 
-### Raspberry Pi Set Up
+## Raspberry Pi Set Up
 The lab report found in `latex/main.pdf` covers the setup of the Pi in greater detail, but a brief synopsis shall be provided here.
 
 * The Pi should be running RaspbianOS.
@@ -44,7 +44,7 @@ This should take 5 to 10 minutes.
 * The external battery should connect to the power and ground of the servo.
 
 
-### Execution Instructions
+## Execution Instructions
 The execution instructions were covered in the compilation instructions section.
 
 If an Android wear watch is not available, sending a POST request with an empty body to the address of the Pi on port 8001 should cause the servo to toggle.
